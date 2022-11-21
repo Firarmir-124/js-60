@@ -1,25 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import FormChat from "./FormChat/FormChat";
+import {MessageType} from "./types";
+import Message from "./Message/Message";
+import {Box, Container} from "@mui/material";
+
+let URL = 'http://146.185.154.90:8000/messages';
 
 function App() {
+  const [messages, setMessages] = useState<MessageType[]>([]);
+
+
+  useEffect(() => {
+    setInterval(async () => {
+      const newRes = await fetch(URL);
+      if (newRes.ok) {
+        const newJsn = await newRes.json();
+        setMessages(newJsn)
+      }
+    }, 3000)
+  }, [])
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <Box component='div' sx={{width: '800px'}}>
+
+        <Box component='div' sx={{ background: 'rgb(231, 235, 240)', height: '500px', overflowY: 'scroll', pt: '10px', px: '10px'}}>
+          <Message messages={messages}/>
+        </Box>
+
+        <Box sx={{background: '#FFF', boxShadow: ' 1px -15px 18px -1px rgba(0,0,0,0.16)'}} component='div'>
+          <FormChat/>
+        </Box>
+
+      </Box>
+    </Container>
   );
 }
 
